@@ -1,6 +1,8 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 const port = 8000;
 const users = {
     users_list: [
@@ -62,7 +64,10 @@ app.get("/users", (req, res) => {
 
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
+    let result = addUser(userToAdd);
+    if (result != undefined) {
+        res.status(201).send();
+    }
     res.send();
 });
 
@@ -84,10 +89,15 @@ const findUserByJob = (job) => {
     );
 };
 
+const createUserId = () => {
+    return Math.floor(Math.random() * 1000000)
+}
+
 const findUserById = (id) =>
     users["users_list"].find((user) => user["id"] === id);
 
 const addUser = (user) => {
+    user.id = createUserId();
     users["users_list"].push(user);
     return user;
 };
