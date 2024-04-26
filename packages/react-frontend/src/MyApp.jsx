@@ -18,19 +18,21 @@ function MyApp() {
         return promise;
     }
     function removeOneCharacter(index) {
-        console.log(index);
+        console.log("Attempting to delete character at index:", index);
         deleteUser(index).then(response => {
             if (response.ok) {
-                // Create a new array without the deleted character only if the delete was successful
+                console.log("Deletion successful for index:", index);
                 const updatedCharacters = characters.filter((character, i) => i !== index);
                 setCharacters(updatedCharacters);
             } else {
-                console.error('Failed to delete the user');
+                console.error('Failed to delete the user. Status:', response.status);
+                response.json().then(data => console.error(data)).catch(err => console.error("Error parsing error response:", err));
             }
         }).catch(error => {
             console.error('Error deleting user:', error);
         });
     }
+
     // function removeOneCharacter(index) {
     //     const updated = characters.filter((character, i) => {
     //         return i !== index;
@@ -62,12 +64,10 @@ function MyApp() {
         return promise;
     }
     function deleteUser(index) {
-        const id = characters[index].id
+        const id = characters[index]._id
+        console.log("ID: " + typeof (id))
         const promise = fetch("Http://localhost:8000/users/" + id, {
             method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
         });
         return promise;
     }
